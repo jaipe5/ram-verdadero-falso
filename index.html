@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Comprueba lo que sabes · RAM</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f1f4fa;color:#21304b;font-family:'Segoe UI',Arial,sans-serif}main{max-width:900px;margin:auto;padding:28px 18px}header{padding:32px;background:#25234d;color:white;border-radius:22px}small{letter-spacing:.12em;color:#c2c5ff}h1{font-size:clamp(2rem,5vw,3rem);margin:12px 0}p{line-height:1.65}.bar{padding:20px 0}progress{width:100%;accent-color:#6356cc;height:12px}fieldset{min-width:0;border:1px solid #dce1ed;border-radius:16px;background:white;margin:18px 0;padding:20px}legend{float:left;width:100%;font-weight:600;font-size:1.12rem;line-height:1.6;margin-bottom:18px}.options{clear:both;display:flex;gap:12px;flex-wrap:wrap}label{padding:12px 18px;border:1px solid #c9d0e0;border-radius:10px;cursor:pointer}label:has(input:checked){background:#e9e5ff;border-color:#6653c6}input{accent-color:#6356cc;margin-right:8px}button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:13px 20px;background:#5543b5;color:white;font-weight:700}button.secondary{background:#e3e7f0;color:#25314b}button:disabled{opacity:.55;cursor:default}:focus-visible{outline:3px solid #107da3;outline-offset:3px}.controls{display:flex;gap:12px;flex-wrap:wrap}.feedback{margin-bottom:0;padding:12px;border-radius:8px;background:#eef2f7}.correct{border-left:6px solid #208258}.wrong{border-left:6px solid #bb3845}.blank{border-left:6px solid #b77b13}#result{padding:22px;border-radius:16px;background:#e5e1fa;margin:18px 0}#result:empty{display:none}footer{font-size:.85rem;color:#59657a;font-style:italic;margin:28px 0;line-height:1.7}@media(max-width:540px){header{padding:24px}fieldset{padding:16px}main{padding:16px 12px}}
+</style></head><body><main>
+<header><small>FUNDAMENTOS DE HARDWARE · ACTIVIDAD 02</small><h1>Comprueba lo que sabes sobre la RAM</h1><p>Lee cada afirmación y marca Verdadero o Falso. Puedes cambiar tus respuestas antes de corregir. Al finalizar, revisa las explicaciones.</p><p>20 afirmaciones · Cada acierto suma 0,5 puntos · Los errores y las preguntas sin responder no restan.</p></header>
+<div class="bar"><p id="count" aria-live="polite"></p><progress id="progress" max="20" value="0" aria-label="Preguntas respondidas"></progress></div>
+<form id="quiz"></form><div class="controls"><button id="check" type="button">Corregir actividad</button><button id="reset" type="button" class="secondary">Reiniciar y mezclar</button></div>
+<section id="result" aria-live="polite" tabindex="-1" aria-label="Resultado"></section>
+<footer>IES María de Zayas de Sotomayor · Prof. Jaime Pérez Egas<br>Autoevaluación: la nota no se envía al profesor ni se guarda al cerrar o recargar la página.</footer><noscript>Activa JavaScript para realizar la actividad.</noscript>
+</main><script>
+'use strict';
+// Banco editable: afirmación, respuesta correcta y explicación.
+const questions=[
+{id:1,text:'La RAM guarda temporalmente información que utilizan los programas en ejecución.',answer:true,why:'Es la memoria de trabajo del ordenador y mantiene datos e instrucciones necesarios durante la ejecución.'},
+{id:2,text:'Ser volátil significa que la RAM conserva sus datos cuando deja de recibir corriente.',answer:false,why:'Volátil significa que pierde su contenido al dejar de recibir alimentación eléctrica.'},
+{id:3,text:'El procesador accede a información de la RAM para realizar operaciones.',answer:true,why:'Los datos y las instrucciones de los programas en ejecución se mantienen en la memoria de trabajo para su utilización.'},
+{id:4,text:'Escribir en un documento garantiza que los últimos cambios ya están guardados en el SSD.',answer:false,why:'Editar y guardar son acciones diferentes. Debes guardar los cambios o comprobar que el guardado automático se ha realizado.'},
+{id:5,text:'Un SSD necesita recibir corriente continuamente para conservar los archivos guardados.',answer:false,why:'El SSD es almacenamiento no volátil: conserva los archivos aunque el equipo esté apagado.'},
+{id:6,text:'Al abrir un documento, parte de su contenido puede cargarse en la RAM.',answer:true,why:'El contenido necesario se carga en la zona de trabajo para que la aplicación pueda utilizarlo.'},
+{id:7,text:'Los módulos de RAM se instalan en ranuras de la placa base.',answer:true,why:'En los equipos con memoria modular, las ranuras correspondientes permiten instalar los módulos.'},
+{id:8,text:'La muesca de un módulo sirve para aumentar su capacidad.',answer:false,why:'La muesca ayuda a orientar la inserción y a evitar introducir módulos incompatibles; no añade capacidad.'},
+{id:9,text:'Los contactos del módulo permiten su conexión eléctrica.',answer:true,why:'Los contactos establecen las conexiones eléctricas entre el módulo y la ranura.'},
+{id:10,text:'Si un módulo no encaja, se debe forzar hasta que entre en la ranura.',answer:false,why:'No debes forzarlo. Revisa la orientación, el formato y la compatibilidad antes de instalarlo.'},
+{id:11,text:'La capacidad de la RAM se expresa habitualmente en MT/s.',answer:false,why:'La capacidad suele expresarse en gigabytes (GB). MT/s expresa millones de transferencias por segundo.'},
+{id:12,text:'Una RAM de 16 GB ofrece más capacidad que una de 8 GB.',answer:true,why:'16 GB es el doble de capacidad que 8 GB. Esto no implica duplicar la velocidad del equipo.'},
+{id:13,text:'Ampliar la RAM mejora por igual el rendimiento de todas las tareas.',answer:false,why:'La mejora depende de la tarea, de si faltaba memoria y del resto de los componentes del equipo.'},
+{id:14,text:'La latencia está relacionada con tiempos de espera en ciertas operaciones.',answer:true,why:'La latencia describe demoras. Es una característica distinta de la tasa de transferencia.'},
+{id:15,text:'Una mayor tasa de transferencia garantiza que todos los tiempos de espera sean menores.',answer:false,why:'La tasa de transferencia y la latencia son características diferentes; una no determina por sí sola todos los tiempos de espera.'},
+{id:16,text:'MT/s significa millones de transferencias por segundo.',answer:true,why:'Esta unidad expresa la tasa de transferencia, no la cantidad de información que puede almacenar la memoria.'},
+{id:17,text:'Un módulo DDR5 se puede intercambiar por uno DDR4 en la misma ranura.',answer:false,why:'DDR4 y DDR5 son generaciones diferentes con requisitos físicos y eléctricos incompatibles.'},
+{id:18,text:'El manual de la placa ayuda a elegir las ranuras recomendadas para instalar la RAM.',answer:true,why:'El manual indica las posiciones recomendadas según el número de módulos y la configuración de canales.'},
+{id:19,text:'Antes de ampliar la RAM basta con comprobar que el módulo tiene más gigabytes.',answer:false,why:'También debes comprobar generación, formato, límites admitidos y compatibilidad con el equipo.'},
+{id:20,text:'Antes de instalar RAM debes apagar y desconectar el equipo y tomar precauciones electrostáticas.',answer:true,why:'Estas medidas reducen riesgos durante la manipulación y ayudan a evitar daños por descargas electrostáticas.'}
+];
+let order=[],answers=new Map(),finished=false;
+const quiz=document.getElementById('quiz'),result=document.getElementById('result'),check=document.getElementById('check');
+function shuffled(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function score(){let correct=0,wrong=0,blank=0;questions.forEach(q=>{if(!answers.has(q.id))blank++;else if(answers.get(q.id)===q.answer)correct++;else wrong++;});return{correct,wrong,blank,grade:correct*.5};}
+function progress(){const n=answers.size;document.getElementById('count').textContent=n+' de 20 respondidas';document.getElementById('progress').value=n;}
+function start(){order=shuffled(questions);answers=new Map();finished=false;check.disabled=false;result.textContent='';quiz.replaceChildren();order.forEach((q,i)=>{
+ const field=document.createElement('fieldset');field.id='q'+q.id;
+ const legend=document.createElement('legend');legend.textContent=(i+1)+'. '+q.text;field.append(legend);
+ const options=document.createElement('div');options.className='options';
+ [true,false].forEach(value=>{const label=document.createElement('label'),input=document.createElement('input');input.type='radio';input.name='answer'+q.id;input.value=String(value);input.addEventListener('change',()=>{if(finished)return;answers.set(q.id,value);progress();});label.append(input,document.createTextNode(value?'Verdadero':'Falso'));options.append(label);});
+ field.append(options);quiz.append(field);
+ });progress();}
+check.addEventListener('click',()=>{if(finished)return;finished=true;check.disabled=true;const s=score();
+ result.textContent=`Nota: ${s.grade.toLocaleString('es-ES',{minimumFractionDigits:1})}/10. Aciertos: ${s.correct}. Errores: ${s.wrong}. Sin responder: ${s.blank}. Revisa las explicaciones de cada afirmación. Para intentarlo de nuevo, pulsa «Reiniciar y mezclar».`;
+ order.forEach(q=>{const field=document.getElementById('q'+q.id),has=answers.has(q.id),ok=has&&answers.get(q.id)===q.answer;field.className=!has?'blank':ok?'correct':'wrong';field.querySelectorAll('input').forEach(input=>input.disabled=true);const p=document.createElement('p');p.className='feedback';p.textContent=(!has?'Sin responder. ':ok?'Correcto. ':'Incorrecto. ')+(q.answer?'Verdadero. ':'Falso. ')+q.why;field.append(p);});result.focus();});
+document.getElementById('reset').addEventListener('click',()=>{if(answers.size&&!finished&&!window.confirm('¿Quieres borrar tus respuestas y empezar de nuevo?'))return;start();document.getElementById('count').scrollIntoView({block:'center'});});
+start();
+</script></body></html>
